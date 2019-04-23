@@ -5,6 +5,8 @@ mcp1 = MCP23S17(bus=0x00, pin_cs=0x00, device_id=0x00)
 mcp2 = MCP23S17(bus=0x00, pin_cs=0x00, device_id=0x01)
 mcp1.open()
 mcp2.open()
+mcp1._spi.max_speed_hz = 7000
+mcp2._spi.max_speed_hz = 7000
 
 for x in range(0, 16):
     mcp1.setDirection(x, mcp1.DIR_OUTPUT)
