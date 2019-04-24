@@ -89,7 +89,7 @@ class playtime:
             print("{} dtime: {}  channel: {}  note: {} velocity: {}".format(*event))
 
         if self.args.strict:
-            assert 0 <= event[3] <= 87
+            assert 0 <= event[3] < self.args.keys
 
         if event[0] == 'note_on':
             self.keys[event[3]] = 1
