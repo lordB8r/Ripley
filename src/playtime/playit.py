@@ -14,38 +14,63 @@ except RuntimeError as e:
     pprint(e)
     print("MCP23S17 failed to import. I hope you are OK with this.")
 
+# map keys to chips and pins
+key_map = [
+        (0,0),
+        (1,0),
+        (2,0),
+        (4,0),
+        (5,0),
+        (6,0),
+        (7,0),
+        (8,0),
+        (9,0),
+        (10,0),
+        (11,0),
+        (12,0),
+        (13,0),
+        (14,0),
+        (15,0),
+        (0,1),
+        ]
+
 class playtime:
 
     version = 0.3
 
-    keys=[0] * 88 # 1 pin per key
+    keys=[] # 1 pin per key
 
     ## SPI things
 
     def spi_init(self):
-        self.mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=0x00)
-        self.mcp.open()
-        self.mcp._spi.max_speed_hz = 7000
-
-        # TODO: set all the pins on all the chips
+        self.mcps = []
         for x in range(1):
-            self.mcp.setDirection(x, self.mcp.DIR_OUTPUT)
+
+            mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=0)
+            mcp.open()
+            mcp._spi.max_speed_hz = 7000
+
+            for x in range(16):
+                mcp.setDirection(x, mcp.DIR_OUTPUT)
+
+            self.mcps.append(mcp)
+            mcp=None
 
 
     def spi_send(self):
         # solenoids on/off
         for key_no, key_val in enumerate(self.keys):
-            # TODO: map keys 0-87 to chips and pins
-            pin_no = key_no
+            pin_no,chip_no = key_map[key_no]
             if key_val:
                 print(' ', end='')
                 if self.args.spi:
                     # press
-                    self.mcp.digitalWrite(pin_no, MCP23S17.LEVEL_HIGH)
+                    print( "pin: {}  chip: {}".format(pin_no, chip_no))
+                    self.mcps[chip_no].digitalWrite(pin_no, MCP23S17.LEVEL_HIGH)
             else:
                 if self.args.spi:
                     # releawse
-                    self.mcp.digitalWrite(pin_no, MCP23S17.LEVEL_LOW)
+                    self.mcps[chip_no].digitalWrite(pin_no, MCP23S17.LEVEL_LOW)
                 print('*', end='')
         print()
 
@@ -93,6 +118,15 @@ class playtime:
                 time.sleep( self.ticks/1000 )
 
 
+    def demo(self):
+        # walk down all the keys
+        while True:
+            for i in range(len(self.keys)):
+                self.keys[i] = 1
+                self.spi_send()
+                self.keys[i] = 0
+                time.sleep(1)
+
     # program things
 
     def pars_args(self):
@@ -102,14 +136,20 @@ class playtime:
         parser.add_argument("--filename",
                 help='midi file to play')
 
+        parser.add_argument("--demo", action="store_true",
+                help='sequence all the pins')
+
         parser.add_argument("--strict", action="store_true",
                 help='error on invalid data')
 
         parser.add_argument("--spi", action="store_true",
                 help="Send SPI commands.")
 
+        parser.add_argument("--keys", type=int, default=88,
+                help="Number of keys in a piano.")
+
         parser.add_argument("-v", "--verbose", type=int,
-                deafult=0, )
+                default=0, )
         parser.add_argument("--version", action="store_true" )
         # parser.add_argument("--debug", action="store_true" )
 
@@ -126,12 +166,17 @@ class playtime:
             print(self.version)
             return
 
+        self.keys = [0] * self.args.keys
+
         if self.args.spi:
             self.spi_init()
 
-        self.score_get()
+        if self.args.demo:
+            self.demo()
 
-        self.play()
+        if self.args.filename:
+            self.score_get()
+            self.play()
 
 if __name__ == "__main__":
     pt = playtime()
