@@ -108,7 +108,8 @@ class playtime:
         parser.add_argument("--spi", action="store_true",
                 help="Send SPI commands.")
 
-        parser.add_argument("-v", "--verbose", type=int, )
+        parser.add_argument("-v", "--verbose", type=int,
+                deafult=0, )
         parser.add_argument("--version", action="store_true" )
         # parser.add_argument("--debug", action="store_true" )
 
