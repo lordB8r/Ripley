@@ -19,6 +19,7 @@ key_map = [
         (0,0),
         (1,0),
         (2,0),
+        (3,0),
         (4,0),
         (5,0),
         (6,0),
@@ -27,16 +28,12 @@ key_map = [
         (9,0),
         (10,0),
         (11,0),
-        (12,0),
-        (13,0),
-        (14,0),
-        (15,0),
         (0,1),
         ]
 
 class playtime:
 
-    version = 0.3
+    version = 0.5
 
     keys=[] # 1 pin per key
 
@@ -44,14 +41,14 @@ class playtime:
 
     def spi_init(self):
         self.mcps = []
-        for x in range(1):
+        for dev in range(2):
 
-            mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=0)
+            mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=dev)
             mcp.open()
             mcp._spi.max_speed_hz = 7000
 
-            for x in range(16):
-                mcp.setDirection(x, mcp.DIR_OUTPUT)
+            for pin in range(16):
+                mcp.setDirection(pin, mcp.DIR_OUTPUT)
 
             self.mcps.append(mcp)
             mcp=None
@@ -92,7 +89,7 @@ class playtime:
             print("{} dtime: {}  channel: {}  note: {} velocity: {}".format(*event))
 
         if self.args.strict:
-            assert 0 <= event[3] <= 87
+            assert 0 <= event[3] < self.args.keys
 
         if event[0] == 'note_on':
             self.keys[event[3]] = 1
@@ -125,7 +122,7 @@ class playtime:
                 self.keys[i] = 1
                 self.spi_send()
                 self.keys[i] = 0
-                time.sleep(1)
+                time.sleep(.3)
 
     # program things
 
