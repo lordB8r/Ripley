@@ -31,6 +31,8 @@ key_map = [
         (0,1),
         ]
 
+MIDI_OFFSET = 21
+
 class playtime:
 
     version = 0.5
@@ -57,16 +59,19 @@ class playtime:
     def spi_send(self):
         # solenoids on/off
         for key_no, key_val in enumerate(self.keys):
+            # This line breaks on JPs machine
             pin_no,chip_no = key_map[key_no]
+            # This line works on JPs machine
+            # pin_no = key_no
             if key_val:
                 print(' ', end='')
                 if self.args.spi:
-                    # press
+                    # press/energized
                     print( "pin: {}  chip: {}".format(pin_no, chip_no))
                     self.mcps[chip_no].digitalWrite(pin_no, MCP23S17.LEVEL_HIGH)
             else:
                 if self.args.spi:
-                    # releawse
+                    # release
                     self.mcps[chip_no].digitalWrite(pin_no, MCP23S17.LEVEL_LOW)
                 print('*', end='')
         print()
@@ -85,16 +90,18 @@ class playtime:
 
     def note(self, event):
         # note on/off
+        event_note = event[3]-MIDI_OFFSET
+
         if self.args.verbose>=1:
             print("{} dtime: {}  channel: {}  note: {} velocity: {}".format(*event))
 
         if self.args.strict:
-            assert 0 <= event[3] < self.args.keys
+            assert 0 <= event_note < self.args.keys
 
         if event[0] == 'note_on':
-            self.keys[event[3]] = 1
+            self.keys[event_note] = 1
         else:
-            self.keys[event[3]] = 0
+            self.keys[event_note] = 0
 
 
     def play(self):
