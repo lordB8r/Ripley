@@ -28,8 +28,6 @@ int main (void)
   for (;;) {
   for (i = 0 ; i < 15 ; ++i)
   {
-    //writeByte(0, 0, 0x14, 2^i);
-    //delay(1000);
     digitalWrite (BASE + i, 1);
     delay(100);
     digitalWrite (BASE + i, 0);
@@ -37,19 +35,5 @@ int main (void)
   }
     delay(2000);
   }
-  //pinMode         (BASE + 15, INPUT) ;
-  //pullUpDnControl (BASE + 15, PUD_UP) ;
-/*
-  for (;;)
-  {
-    for (i = 0 ; i < 1024 ; ++i)
-    {
-      for (bit = 0 ; bit < 10 ; ++bit)
-        digitalWrite (BASE + bit, i & (1 << bit)) ;
-      delay (5) ;
-      while (digitalRead (BASE + 15) == 0)
-        delay (1) ;
-    }
-  }*/
   return 0 ;
 }
