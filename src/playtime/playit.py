@@ -19,6 +19,7 @@ key_map = [
         (0,0),
         (1,0),
         (2,0),
+        (3,0),
         (4,0),
         (5,0),
         (6,0),
@@ -27,16 +28,12 @@ key_map = [
         (9,0),
         (10,0),
         (11,0),
-        (12,0),
-        (13,0),
-        (14,0),
-        (15,0),
         (0,1),
         ]
 
 class playtime:
 
-    version = 0.3
+    version = 0.5
 
     keys=[] # 1 pin per key
 
@@ -125,7 +122,7 @@ class playtime:
                 self.keys[i] = 1
                 self.spi_send()
                 self.keys[i] = 0
-                time.sleep(1)
+                time.sleep(.3)
 
     # program things
 
