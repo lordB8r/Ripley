@@ -36,7 +36,7 @@ MIDI_OFFSET = 21
 
 class playtime:
 
-    version = 0.5
+    version = 0.7
 
     keys=[] # 1 pin per key
 
@@ -44,7 +44,7 @@ class playtime:
 
     def spi_init(self):
         self.mcps = []
-        for dev in range(2):
+        for dev in range(6):
 
             mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=dev)
             mcp.open()
@@ -135,17 +135,17 @@ class playtime:
                     time.sleep(.3)
 
         if self.args.demo == 2:
-        while True:
-        for bank in range(4):
-            print("bank {}:".format(bank), end=' ')
-            for solenoid in range(22):
-            i = bank+solenoid*4
-            print(i, end=' ')
-            self.keys[i] = 1
-            self.spi_send()
-            self.keys[i] = 0
-            time.sleep(.3)
-            print()
+            while True:
+                for bank in range(4):
+                    print("bank {}:".format(bank), end=' ')
+                    for solenoid in range(22):
+                        i = bank+solenoid*4
+                        print(i, end=' ')
+                        self.keys[i] = 1
+                        self.spi_send()
+                        self.keys[i] = 0
+                        time.sleep(.3)
+                    print()
 
     # program things
 
