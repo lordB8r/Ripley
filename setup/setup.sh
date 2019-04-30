@@ -16,3 +16,5 @@ cd RPi-MCP23S17
 python3 -m venv venv
 . venv/bin/activate
 python3 setup.py install
+
+# https://pjb.com.au/midi/MIDI.html
