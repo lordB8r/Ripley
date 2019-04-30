@@ -125,14 +125,27 @@ class playtime:
 
     def demo(self):
 
+        if self.args.demo == 1:
+            # walk down all the keys
+            while True:
+                for i in range(len(self.keys)):
+                    self.keys[i] = 1
+                    self.spi_send()
+                    self.keys[i] = 0
+                    time.sleep(.3)
 
-        # walk down all the keys
+        if self.args.demo == 2:
         while True:
-            for i in range(len(self.keys)):
-                self.keys[i] = 1
-                self.spi_send()
-                self.keys[i] = 0
-                time.sleep(.3)
+        for bank in range(4):
+            print("bank {}:".format(bank), end=' ')
+            for solenoid in range(22):
+            i = bank+solenoid*4
+            print(i, end=' ')
+            self.keys[i] = 1
+            self.spi_send()
+            self.keys[i] = 0
+            time.sleep(.3)
+            print()
 
     # program things
 
@@ -143,7 +156,7 @@ class playtime:
         parser.add_argument("--filename",
                 help='midi file to play')
 
-        parser.add_argument("--demo", action="store_true",
+        parser.add_argument("--demo", type=int,
                 help='sequence all the pins')
 
         parser.add_argument("--strict", action="store_true",
