@@ -48,7 +48,7 @@ class playtime:
 
             mcp = MCP23S17(bus=0x00, pin_cs=0x00, device_id=dev)
             mcp.open()
-            mcp._spi.max_speed_hz = 700000
+            mcp._spi.max_speed_hz = 47000000
 
             for pin in range(16):
                 mcp.setDirection(pin, mcp.DIR_OUTPUT)
