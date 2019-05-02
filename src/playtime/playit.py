@@ -132,20 +132,29 @@ class playtime:
                     self.keys[i] = 1
                     self.spi_send()
                     self.keys[i] = 0
-                    time.sleep(.3)
+                    time.sleep(self.args.sleep)
 
         if self.args.demo == 2:
+
+            def one_bank(bank):
+                print("bank {}:".format(bank), end=' ')
+                for solenoid in range(22):
+                    i = bank+solenoid*4
+                    print(i, end=' ')
+                    self.keys[i] = 1
+                    self.spi_send()
+                    self.keys[i] = 0
+                    time.sleep(self.args.sleep)
+                print()
+
             while True:
-                for bank in range(4):
-                    print("bank {}:".format(bank), end=' ')
-                    for solenoid in range(22):
-                        i = bank+solenoid*4
-                        print(i, end=' ')
-                        self.keys[i] = 1
-                        self.spi_send()
-                        self.keys[i] = 0
-                        time.sleep(.3)
-                    print()
+                if self.args.bank is None:
+                    for bank in range(4):
+                        one_bank(bank)
+                else:
+                    one_bank(self.args.bank)
+
+
 
     # program things
 
@@ -158,6 +167,14 @@ class playtime:
 
         parser.add_argument("--demo", type=int,
                 help='sequence all the pins')
+
+        parser.add_argument("--sleep", type=float,
+                default=.3,
+                help='demo sleep between steps')
+
+        parser.add_argument("--bank", type=int,
+                default=None,
+                help='only demo one bank.')
 
         parser.add_argument("--strict", action="store_true",
                 help='error on invalid data')
